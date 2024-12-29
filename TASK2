@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Quiz</title>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background-image: url('https://th.bing.com/th/id/R.3bcb9885029ffb81f58fb4a46c6d854f?rik=caTmTHH%2bNuWv1w&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2f8%2fd%2f1%2f798741-download-free-awesome-nature-backgrounds-1920x1080-for-tablet.jpg&ehk=%2fu8xawhlqhlABfauhjBvJm3YUpEq5Vjqj2FfHAGm%2bj8%3d&risl=&pid=ImgRaw&r=0');
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-position:center;
+  background-size: cover;
+}
+
+.quiz-container {
+  background-color:transparent;
+  
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px black,0px 0px 20px black;
+  width: 300px;
+  text-align: center;
+  position: relative;
+  left:250px;
+}
+
+h1, h2 {
+  color:black;
+}
+
+#options {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#next-button {
+  background-color: #4CAF50;
+  color: black;
+}
+
+button:disabled {
+  background-color:transparent;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none;
+}
+
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Interactive Quiz</h1>
+    <div id="quiz">
+      <p id="question"></p>
+      <div id="options"></div>
+      <button id="next-button" disabled>Next</button>
+    </div>
+    <div id="result" class="hidden">
+      <h2>Your Results</h2>
+      <p id="score"></p>
+      <button onclick="restartQuiz()">Restart Quiz</button>
+    </div>
+  </div>
+  <script>
+    const questions = [
+  {
+    question: "What is the capital of France?",
+    options: ["Berlin", "Madrid", "Paris", "Lisbon"],
+    correct: 2,
+  },
+  {
+    question: "Which planet is known as the Red Planet?",
+    options: ["Earth", "Mars", "Jupiter", "Venus"],
+    correct: 1,
+  },
+  {
+    question: "What is the largest mammal?",
+    options: ["Elephant", "Blue Whale", "Giraffe", "Shark"],
+    correct: 1,
+  },
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+const questionElement = document.getElementById("question");
+const optionsElement = document.getElementById("options");
+const nextButton = document.getElementById("next-button");
+const resultElement = document.getElementById("result");
+const scoreElement = document.getElementById("score");
+
+function loadQuestion() {
+  const current = questions[currentQuestion];
+  questionElement.textContent = current.question;
+  optionsElement.innerHTML = "";
+
+  current.options.forEach((option, index) => {
+    const button = document.createElement("button");
+    button.textContent = option;
+    button.onclick = () => selectAnswer(index);
+    optionsElement.appendChild(button);
+  });
+
+  nextButton.disabled = true;
+}
+
+function selectAnswer(selected) {
+  const current = questions[currentQuestion];
+  const buttons = optionsElement.querySelectorAll("button");
+  buttons.forEach((button, index) => {
+    button.disabled = true;
+    if (index === current.correct) button.style.backgroundColor = "#4CAF50";
+    if (index === selected && index !== current.correct)
+      button.style.backgroundColor = "#f44336";
+  });
+
+  if (selected === current.correct) {
+    score++;
+  }
+
+  nextButton.disabled = false;
+}
+
+nextButton.onclick = () => {
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    loadQuestion();
+  } else {
+    showResults();
+  }
+};
+
+function showResults() {
+  document.getElementById("quiz").classList.add("hidden");
+  resultElement.classList.remove("hidden");
+  scoreElement.textContent = `You scored ${score} out of ${questions.length}`;
+}
+
+function restartQuiz() {
+  currentQuestion = 0;
+  score = 0;
+  document.getElementById("quiz").classList.remove("hidden");
+  resultElement.classList.add("hidden");
+  loadQuestion();
+}
+
+// Initialize the quiz
+loadQuestion();
+
+  </script>
+</body>
+</html>
